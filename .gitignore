@@ -1,5 +1,5 @@
 .env
-.venn
+.venv
 .ide
 .idle
 .vscode
