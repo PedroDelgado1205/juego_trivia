@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Juego{% endblock %}
+
+{% load static %} 
+{% block content %}
+<div class="container">
+    <h1>Juego de Trivia</h1>
+    <!-- Card con la pregunta actual -->
+    <div class="card">
+        <div class="card-content">
+            <p class="title">{{ pregunta.texto }}</p>
+            {% if pregunta.imagen %}
+                <figure class="image">
+                    <img src="{{ pregunta.imagen.url }}" alt="Pregunta" style="width: 300px; height: auto;">
+                </figure>
+            {% endif %}
+            <div id="timer">Tiempo restante: 10 segundos</div>
+        </div>
+    </div>
+
+    <!-- Formulario para enviar la respuesta -->
+    <form method="post" action="{% url 'juego:respuesta' %}">
+        {% csrf_token %}
+        <input type="hidden" name="pregunta_id" value="{{ pregunta.id }}">
+        {% for respuesta in respuestas %}
+            <div class="field">
+                <input type="radio" id="respuesta{{ respuesta.id }}" name="respuesta_id" value="{{ respuesta.id }}" required>
+                <label for="respuesta{{ respuesta.id }}">{{ respuesta.texto }}</label>
+            </div>
+        {% endfor %}
+        <button type="submit" class="button is-primary">Responder</button>
+    </form>
+
+    <!-- Botones de navegación -->
+    <div class="buttons">
+        <a href="{% url 'juego:anterior_pregunta' %}" class="button is-link">Anterior</a>
+        <a href="{% url 'juego:siguiente_pregunta' %}" class="button is-link">Siguiente</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let timer;
+    let timeLeft = 10;
+    let tiempoTomado = 0;
+
+    function startTimer() {
+        timer = setInterval(function() {
+            tiempoTomado += 1;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                document.getElementById('respuestaAutomatica').value = -1; // Valor predeterminado para respuesta incorrecta
+                document.getElementById('tiempoTomado').value = tiempoTomado;
+                document.getElementById('respuestaForm').submit(); // Auto-envía el formulario
+            } else {
+                document.getElementById('timer').innerText = `Tiempo restante: ${timeLeft} segundos`;
+            }
+            timeLeft -= 1;
+        }, 1000);
+    }
+
+    function resetTimer() {
+        clearInterval(timer);
+        tiempoTomado = 0;
+        timeLeft = 10;
+        document.getElementById('timer').innerText = `Tiempo restante: ${timeLeft} segundos`;
+        startTimer();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        resetTimer();
+    });
+</script>
+{% endblock %}

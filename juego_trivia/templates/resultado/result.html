@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultados{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Resultados</h1>
+    <table class="table is-bordered">
+        <tbody>
+            <tr>
+                <th class="is-link">Puntos</th>
+                <td class="is-link">Tiempo</td>
+                <td class="is-link">Correctas</td>
+                <td class="is-link">Nivel</td>
+            </tr>
+            <tr>
+                <td>
+                    {{ resultado.puntuacion }}
+                </td>
+                <td>
+                    {{ resultado.tiempo }}
+                </td>
+                <td>
+                    {{ resultado.aciertos }} / {{ total_preguntas }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
